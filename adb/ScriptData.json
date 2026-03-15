@@ -1,0 +1,94 @@
+{
+    "stories": [
+        {
+            "id": "baker",
+            "title": "霧の書斎",
+            "description": "シャーロック・ホームズとワトソンが新たな事件へ向かう。",
+            "startSceneId": "intro",
+            "scenes": [
+                {
+                    "id": "intro",
+                    "title": "序章 · 独白",
+                    "backgroundImageName": "BG_BAKER_STREET",
+                    "characters": [
+                        { "id": "sherlock", "name": "シャーロック", "imageName": "CHAR_SHERLOCK" }
+                    ],
+                    "lines": [
+                        { "id": "i1", "speaker": "", "text": "霧の夜更け、書斎には紙の擦れる音だけが残っていた。", "kind": "narration" },
+                        { "id": "i2", "speaker": "", "text": "私は机上の地図を指でなぞり、事件の始まりをたどる。", "kind": "narration" }
+                    ],
+                    "choices": [
+                        { "id": "i_c1", "text": "私は静かに視線を上げ、彼の到着を待った。", "nextSceneId": "study", "speaker": "" }
+                    ]
+                },
+                {
+                    "id": "study",
+                    "title": "第一章 · 書斎",
+                    "backgroundImageName": "BG_BAKER_STREET",
+                    "characters": [
+                        { "id": "sherlock", "name": "シャーロック", "imageName": "CHAR_SHERLOCK" },
+                        { "id": "watson", "name": "ワトソン", "imageName": "CHAR_WATSON" }
+                    ],
+                    "lines": [
+                        { "id": "st1", "speaker": "シャーロック", "text": "夜明け前に動くなら、情報の裏取りが先だ。", "kind": "dialogue" },
+                        { "id": "st2", "speaker": "ワトソン", "text": "では、誰に当たる？", "kind": "dialogue" },
+                        { "id": "st3", "speaker": "シャーロック", "text": "レストレードだ。彼なら街の噂を押さえている。", "kind": "dialogue" }
+                    ],
+                    "choices": [
+                        { "id": "st_c1", "text": "すぐに署へ向かおう", "nextSceneId": "branch_a", "speaker": "ワトソン" },
+                        { "id": "st_c2", "text": "まず現場を見てからだ", "nextSceneId": "branch_b", "speaker": "ワトソン" }
+                    ]
+                },
+                {
+                    "id": "branch_a",
+                    "title": "第一章 · 署",
+                    "backgroundImageName": "BG_STREET",
+                    "characters": [
+                        { "id": "sherlock", "name": "シャーロック", "imageName": "CHAR_SHERLOCK" },
+                        { "id": "watson", "name": "ワトソン", "imageName": "CHAR_WATSON" },
+                        { "id": "lestrade", "name": "レストレード", "imageName": "CHAR_WATSON" }
+                    ],
+                    "lines": [
+                        { "id": "ba1", "speaker": "レストレード", "text": "今夜の動きは妙だ。手口が古いのに手際がいい。", "kind": "dialogue" },
+                        { "id": "ba2", "speaker": "シャーロック", "text": "古さは偽装だ。目的は注意を逸らすことにある。", "kind": "dialogue" },
+                        { "id": "ba3", "speaker": "ワトソン", "text": "ならば、狙いはどこだ？", "kind": "dialogue" }
+                    ],
+                    "choices": [
+                        { "id": "ba_c1", "text": "窓の向こうで、雨が街灯に溶けていく。", "nextSceneId": "ending", "speaker": "" }
+                    ]
+                },
+                {
+                    "id": "branch_b",
+                    "title": "第一章 · 現場",
+                    "backgroundImageName": "BG_DESK",
+                    "characters": [
+                        { "id": "sherlock", "name": "シャーロック", "imageName": "CHAR_SHERLOCK" },
+                        { "id": "watson", "name": "ワトソン", "imageName": "CHAR_WATSON" },
+                        { "id": "lestrade", "name": "レストレード", "imageName": "CHAR_WATSON" }
+                    ],
+                    "lines": [
+                        { "id": "bb1", "speaker": "ワトソン", "text": "ここが始まりの場所か。", "kind": "dialogue" },
+                        { "id": "bb2", "speaker": "レストレード", "text": "痕跡は残っているが、意図的に散らしてある。", "kind": "dialogue" },
+                        { "id": "bb3", "speaker": "シャーロック", "text": "焦りが混じっている。犯人は余裕を失い始めた。", "kind": "dialogue" }
+                    ],
+                    "choices": [
+                        { "id": "bb_c1", "text": "霧の向こうで、足音がひとつ消えた。", "nextSceneId": "ending", "speaker": "" }
+                    ]
+                },
+                {
+                    "id": "ending",
+                    "title": "第一章 · 記録",
+                    "backgroundImageName": "BG_DESK",
+                    "characters": [
+                        { "id": "sherlock", "name": "シャーロック", "imageName": "CHAR_SHERLOCK" },
+                        { "id": "watson", "name": "ワトソン", "imageName": "CHAR_WATSON" }
+                    ],
+                    "lines": [
+                        { "id": "e1", "speaker": "", "text": "ワトソンは手帳を開き、まだ乾かぬインクで新たな謎を書き始める。", "kind": "narration" }
+                    ],
+                    "choices": []
+                }
+            ]
+        }
+    ]
+}
