@@ -979,6 +979,7 @@ private struct ChoiceRow: View {
 }
 
 
+
 private struct HintRow: View {
     let requiresHold: Bool
     let progress: Double
