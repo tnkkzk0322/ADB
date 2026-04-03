@@ -351,6 +351,7 @@ private struct StoryPlayerView: View {
     @State private var isSaveAlertPresented = false
     @State private var isHistoryPresented = false
     @State private var history: [HistoryEntry] = []
+    @State private var viewMode: ScriptViewMode = .novel
     init(
         story: Story,
         initialSceneId: String,
@@ -370,13 +371,29 @@ private struct StoryPlayerView: View {
         story.scene(id: currentSceneId) ?? story.fallbackScene
     }
 
+    private var hasDialogueLines: Bool {
+        currentScene.lines.contains { $0.kind == .dialogue }
+    }
+
+    private var visibleLines: [ScriptLine] {
+        switch viewMode {
+        case .novel:
+            return currentScene.lines
+        case .dialogue:
+            return currentScene.lines.filter { $0.kind == .dialogue }
+        }
+    }
+
     private var currentLine: ScriptLine {
-        let lines = currentScene.lines
+        let lines = visibleLines
+        if lines.isEmpty {
+            return ScriptLine(id: "dialogue_placeholder", speaker: "", text: "", kind: .narration)
+        }
         return lines[min(currentLineIndex, max(lines.count - 1, 0))]
     }
 
     private var isAtLineEnd: Bool {
-        currentLineIndex >= max(currentScene.lines.count - 1, 0)
+        currentLineIndex >= max(visibleLines.count - 1, 0)
     }
 
     var body: some View {
@@ -416,6 +433,7 @@ private struct StoryPlayerView: View {
                     TopBar(
                         scene: currentScene,
                         storyTitle: story.title,
+                        viewMode: $viewMode,
                         onExit: onExit,
                         onSave: saveCurrent,
                         onShowHistory: { isHistoryPresented = true }
@@ -452,9 +470,15 @@ private struct StoryPlayerView: View {
                 .onChange(of: currentSceneId) { _, newValue in
                     currentLineIndex = 0
                     saveStore.saveSceneId(newValue, for: story.id)
+                    handleDialogueOnlySceneIfNeeded()
+                }
+                .onChange(of: viewMode) { _, _ in
+                    currentLineIndex = 0
+                    handleDialogueOnlySceneIfNeeded()
                 }
                 .onAppear {
                     saveStore.saveSceneId(currentSceneId, for: story.id)
+                    handleDialogueOnlySceneIfNeeded()
                 }
                 .alert("Progress saved", isPresented: $isSaveAlertPresented) {
                     Button("OK", role: .cancel) { }
@@ -469,7 +493,7 @@ private struct StoryPlayerView: View {
     }
 
     private func advanceLine() {
-        guard currentLineIndex + 1 < currentScene.lines.count else { return }
+        guard currentLineIndex + 1 < visibleLines.count else { return }
         history.append(HistoryEntry(from: currentLine))
         currentLineIndex += 1
     }
@@ -487,11 +511,29 @@ private struct StoryPlayerView: View {
         saveStore.saveSceneId(currentSceneId, for: story.id)
         isSaveAlertPresented = true
     }
+
+    private func handleDialogueOnlySceneIfNeeded() {
+        guard viewMode == .dialogue else { return }
+        guard !hasDialogueLines else { return }
+        if currentScene.choices.count == 1, let choice = currentScene.choices.first {
+            selectChoice(choice)
+        } else if currentScene.choices.isEmpty {
+            onThanks()
+        }
+    }
+}
+
+private enum ScriptViewMode: String, CaseIterable, Identifiable {
+    case novel = "Novel"
+    case dialogue = "Dialogue"
+
+    var id: String { rawValue }
 }
 
 private struct TopBar: View {
     let scene: ScriptScene
     let storyTitle: String
+    @Binding var viewMode: ScriptViewMode
     let onExit: () -> Void
     let onSave: () -> Void
     let onShowHistory: () -> Void
@@ -519,10 +561,25 @@ private struct TopBar: View {
             }
 
             Spacer()
-
-            HStack(spacing: 8) {
-                CapsuleButton(title: "Save", action: onSave)
-                CapsuleButton(title: "History", action: onShowHistory)
+            VStack {
+                HStack {
+                    Spacer()
+                    Picker("", selection: $viewMode) {
+                        ForEach(ScriptViewMode.allCases) { mode in
+                            Text(mode.rawValue).tag(mode)
+                        }
+                    }
+                    .labelsHidden()
+                    .pickerStyle(.segmented)
+                    .tint(AppTheme.accentBlue.opacity(0.9))
+                    .frame(width: 180)
+                }
+                
+                HStack(spacing: 8) {
+                    Spacer()
+                    CapsuleButton(title: "Save", action: onSave)
+                    CapsuleButton(title: "History", action: onShowHistory)
+                }
             }
         }
         .padding(.vertical, 8)
